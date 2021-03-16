@@ -1,4 +1,5 @@
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
 const router = require('express').Router();
@@ -18,18 +19,25 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, './public/note
 
 // api routes
 app.get('/api/notes', (req, res) => {
-    console.log("route hit");
+    // console.log("route hit");
     res.json(jsonNotes);
 });
 
 app.post('/api/notes', (req, res) => {
     let newNote = req.body;
-    let id = jsonNotes.length + 1;
+    let id = uuidv4();
     newNote.id = id;
     jsonNotes.push(newNote);
     fs.writeFileSync('./db/db.json', JSON.stringify(jsonNotes));
     res.json(newNote);
     console.log(jsonNotes);
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+    let savedNotes = jsonNotes.filter(note => note.id !== req.params.id);
+    jsonNotes = savedNotes;
+    fs.writeFileSync('./db/db.json', JSON.stringify(jsonNotes));
+    res.json(jsonNotes);
 });
 
 // post, note is req.body, create an id and attach to note
