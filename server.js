@@ -22,6 +22,20 @@ app.get('/api/notes', (req, res) => {
     res.json(jsonNotes);
 });
 
+app.post('/api/notes', (req, res) => {
+    let newNote = req.body;
+    let id = jsonNotes.length + 1;
+    newNote.id = id;
+    jsonNotes.push(newNote);
+    fs.writeFileSync('./db/db.json', JSON.stringify(jsonNotes));
+    res.json(newNote);
+    console.log(jsonNotes);
+});
+
+// post, note is req.body, create an id and attach to note
+// push the note into the jsonNotes array
+// rewrite the file with the notes stringified
+// res.json(new note)
 
 
 
